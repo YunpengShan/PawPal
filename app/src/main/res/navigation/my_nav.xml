@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/signInFragment">
+
+    <!-- SignInFragment -->
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.auth.SignInFragment"
+        android:label="Sign In"
+        tools:layout="@layout/fragment_sign_in">
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <!-- SignUpFragment -->
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.auth.SignUpFragment"
+        android:label="Sign Up"
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+
+    <!-- HomeFragment -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_addFragment"
+            app:destination="@id/addFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_updateFragment"
+            app:destination="@id/updateFragment" />
+    </fragment>
+
+    <!-- AddFragment -->
+    <fragment
+        android:id="@+id/addFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.AddFragment"
+        android:label="Add Pet"
+        tools:layout="@layout/fragment_add">
+        <action
+            android:id="@+id/action_addFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <!-- UpdateFragment -->
+    <fragment
+        android:id="@+id/updateFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.UpdateFragment"
+        android:label="Update Pet"
+        tools:layout="@layout/fragment_update">
+        <action
+            android:id="@+id/action_updateFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="type"
+            app:argType="string" />
+        <argument
+            android:name="breed"
+            app:argType="string" />
+        <argument
+            android:name="vaccinationDates"
+            app:argType="string" />
+        <argument
+            android:name="feedingSchedule"
+            app:argType="string" />
+        <argument
+            android:name="petPicURL"
+            app:argType="string" />
+    </fragment>
+</navigation>

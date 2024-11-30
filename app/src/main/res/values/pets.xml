@@ -1,0 +1,9 @@
+<resources>
+    <string-array name="pet_types">
+        <item>Cat</item>
+        <item>Dog</item>
+        <item>Bird</item>
+        <item>Reptile</item>
+        <item>Fish</item>
+    </string-array>
+</resources>

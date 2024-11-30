@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "328439205225",
+    "project_id": "pawpal-b1108",
+    "storage_bucket": "pawpal-b1108.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328439205225:android:fd574c201004b2dcadc1f8",
+        "android_client_info": {
+          "package_name": "finalproject.group11_danielle_yunpeng_rameeze.sheridan.org"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM7l-MFRLqX8oeAD78P5vN_T3_EJs9tC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

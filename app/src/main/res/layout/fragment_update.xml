@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="@color/white"
+    tools:context=".UpdateFragment">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvUpdateTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Update Pet"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Pet Name Label -->
+    <TextView
+        android:id="@+id/tvPetNameLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Pet Name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tvUpdateTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Pet Name -->
+    <EditText
+        android:id="@+id/edtUpdateName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter pet name"
+        android:inputType="text"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tvPetNameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Pet Type Label and Spinner -->
+    <LinearLayout
+        android:id="@+id/linearLayoutPetType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/edtUpdateName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvPetTypeLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pet Type"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_vertical" />
+
+        <Spinner
+            android:id="@+id/spinner_pet_type_update"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <!-- Pet Breed Label -->
+    <TextView
+        android:id="@+id/tvPetBreedLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Breed"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutPetType"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Pet Breed -->
+    <EditText
+        android:id="@+id/edtUpdateBreed"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter breed"
+        android:inputType="text"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tvPetBreedLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Vaccination Dates Label -->
+    <TextView
+        android:id="@+id/tvVaccinationDates"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Vaccination Dates"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/edtUpdateBreed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Vaccination Dates -->
+    <EditText
+        android:id="@+id/edtUpdateVaccinationDates"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Select vaccination date"
+        android:focusable="false"
+        android:clickable="true"
+        android:textSize="16sp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tvVaccinationDates"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Feeding Schedule Label -->
+    <TextView
+        android:id="@+id/tvFeedingScheduleLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Feeding Schedule"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintTop_toBottomOf="@id/edtUpdateVaccinationDates"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Feeding Schedule -->
+    <EditText
+        android:id="@+id/edtUpdateFeedingSchedule"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter schedule (e.g., morning)"
+        android:inputType="text"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tvFeedingScheduleLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Pet Image -->
+    <ImageView
+        android:id="@+id/imgUpdate"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/take_pic_logo"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/edtUpdateFeedingSchedule"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Update Button -->
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Update Pet"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/imgUpdate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

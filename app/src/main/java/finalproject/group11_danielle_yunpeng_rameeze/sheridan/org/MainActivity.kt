@@ -1,22 +1,21 @@
 package finalproject.group11_danielle_yunpeng_rameeze.sheridan.org
 
 import android.os.Bundle
-import android.view.Menu
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import com.google.android.material.navigation.NavigationView
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,35 +23,57 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.appBarMain.toolbar)
+        // Set Toolbar as ActionBar
+        setSupportActionBar(binding.toolbar)
 
-        binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
-        }
+        // Initialize NavHostFragment and NavController
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        navController = navHostFragment.navController
+
+        // Initialize DrawerLayout and NavigationView
         val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-    }
+        val navigationView: NavigationView = binding.navView
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
+        // Configure AppBar with DrawerLayout
+        appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.homeFragment),
+            drawerLayout
+        )
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        NavigationUI.setupWithNavController(navigationView, navController)
+
+        // Handle navigation drawer menu item clicks
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    // Navigate to Home
+                    navController.navigate(R.id.homeFragment)
+                }
+                R.id.nav_logout -> {
+                    // Handle Logout
+                    Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.signInFragment)
+                }
+                else -> {
+                    // Handle other menu items if necessary
+                }
+            }
+            drawerLayout.closeDrawers() // Close the navigation drawer after an item is selected
+            true
+        }
+
+        // Hide back button in SignInFragment and SignUpFragment
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.signInFragment || destination.id == R.id.signUpFragment) {
+                supportActionBar?.setDisplayHomeAsUpEnabled(false) // Hide the back button
+            } else {
+                supportActionBar?.setDisplayHomeAsUpEnabled(true) // Show the back button
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
