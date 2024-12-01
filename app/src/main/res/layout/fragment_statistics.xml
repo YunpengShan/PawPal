@@ -1,0 +1,66 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvStatisticsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pet Distribution by Type"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Pet Type Statistics -->
+        <TextView
+            android:id="@+id/tvDogCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dogs: 0"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tvCatCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cats: 0"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tvBirdCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Birds: 0"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tvReptileCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reptiles: 0"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tvFishCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fish: 0"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+</ScrollView>

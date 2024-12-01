@@ -55,8 +55,14 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
                     navController.navigate(R.id.signInFragment)
                 }
-                else -> {
-                    // Handle other menu items if necessary
+                R.id.nav_search -> {
+                    navController.navigate(R.id.searchFragment)
+                }
+                R.id.nav_statistics -> {
+                    navController.navigate(R.id.statisticsFragment)
+                }
+                R.id.nav_about -> {
+                    navController.navigate(R.id.aboutFragment)
                 }
             }
             drawerLayout.closeDrawers() // Close the navigation drawer after an item is selected

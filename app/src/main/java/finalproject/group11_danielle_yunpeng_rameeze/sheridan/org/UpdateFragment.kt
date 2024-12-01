@@ -60,7 +60,7 @@ class UpdateFragment : Fragment() {
             edtUpdateName.setText(args.name)
             edtUpdateBreed.setText(args.breed)
             edtUpdateVaccinationDates.setText(args.vaccinationDates)
-            edtUpdateFeedingSchedule.setText(args.feedingSchedule)
+            edtUpdateFoodAmount.setText(args.foodAmount)
             Picasso.get().load(imageUrl).into(imgUpdate)
 
             // Setup Spinner and DatePicker
@@ -117,7 +117,7 @@ class UpdateFragment : Fragment() {
         val name = binding.edtUpdateName.text.toString()
         val breed = binding.edtUpdateBreed.text.toString()
         val vaccinationDates = binding.edtUpdateVaccinationDates.text.toString()
-        val feedingSchedule = binding.edtUpdateFeedingSchedule.text.toString()
+        val foodAmount = binding.edtUpdateFoodAmount.text.toString()
         val petTypeDisplayName = binding.spinnerPetTypeUpdate.selectedItem.toString()
 
         if (name.isEmpty()) {
@@ -142,7 +142,7 @@ class UpdateFragment : Fragment() {
                                 breed = breed,
                                 name = name,
                                 vaccinationDates = vaccinationDates,
-                                feedingSchedule = feedingSchedule,
+                                foodAmount = foodAmount,
                                 petPicURL = imageUrl.toString()
                             )
                             saveUpdatedPet(userId, updatedPet)
@@ -155,7 +155,7 @@ class UpdateFragment : Fragment() {
                 breed = breed,
                 name = name,
                 vaccinationDates = vaccinationDates,
-                feedingSchedule = feedingSchedule,
+                foodAmount = foodAmount,
                 petPicURL = imageUrl
             )
             saveUpdatedPet(userId, updatedPet)

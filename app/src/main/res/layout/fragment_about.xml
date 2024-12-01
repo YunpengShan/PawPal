@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvAppDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="App Details: This is a pet management app."
+        android:textSize="18sp"
+        android:paddingBottom="8dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvStudentInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Student Information:\nYunpeng Shan\nDanielle Creary-Thomas\nRameez Arshad"
+        android:textSize="16sp"
+        android:paddingBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/tvAppPurpose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Purpose of the App: This app is designed to help users manage their pets by tracking their details and information."
+        android:textSize="16sp"/>
+
+</LinearLayout>

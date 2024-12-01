@@ -37,7 +37,7 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
                 tvNameItem.text = currentItem.name ?: "Unknown"
                 tvBreedItem.text = currentItem.breed ?: "N/A"
                 tvTypeItem.text = currentItem.type ?: "N/A"
-                tvFeedingScheduleItem.text = currentItem.feedingSchedule ?: "N/A"
+                tvFoodAmountItem.text = currentItem.foodAmount ?: "N/A"
                 tvVaccinationDatesItem.text = currentItem.vaccinationDates ?: "N/A"
 
                 // Load the pet's image using Picasso
@@ -51,7 +51,7 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
                         currentItem.type ?: "",
                         currentItem.breed ?: "",
                         currentItem.vaccinationDates ?: "",
-                        currentItem.feedingSchedule ?: "",
+                        currentItem.foodAmount ?: "",
                         currentItem.petPicURL ?: ""
                     )
                     findNavController(holder.itemView).navigate(action)

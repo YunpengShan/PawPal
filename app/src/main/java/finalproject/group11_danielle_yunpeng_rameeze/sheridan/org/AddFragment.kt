@@ -98,7 +98,7 @@ class AddFragment : Fragment() {
         val typeDisplayName = binding.spinnerPetType.selectedItem.toString() // Get selected type
         val breed = binding.edtBreed.text.toString()
         val vaccinationDates = binding.edtVaccinationDates.text.toString()
-        val feedingSchedule = binding.edtFeedingSchedule.text.toString()
+        val foodAmount = binding.edtFoodAmount.text.toString()
 
         if (name.isEmpty()) {
             binding.edtName.error = "Enter pet name"
@@ -122,7 +122,7 @@ class AddFragment : Fragment() {
                                 breed = breed,
                                 name = name,
                                 vaccinationDates = vaccinationDates,
-                                feedingSchedule = feedingSchedule,
+                                foodAmount = foodAmount,
                                 petPicURL = imageUrl.toString()
                             )
 

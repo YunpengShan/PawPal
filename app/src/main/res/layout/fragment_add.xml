@@ -126,12 +126,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Feeding Schedule Label -->
+    <!-- Food Amount Label -->
     <TextView
-        android:id="@+id/tvFeedingSchedule"
+        android:id="@+id/tvFoodAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Feeding Schedule"
+        android:text="Food Amount Per Meal"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp"
@@ -139,16 +139,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Feeding Schedule -->
+    <!-- Food Amount -->
     <EditText
-        android:id="@+id/edtFeedingSchedule"
+        android:id="@+id/edtFoodAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Enter schedule (e.g., morning)"
         android:inputType="text"
         android:textSize="16sp"
         android:layout_marginBottom="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tvFeedingSchedule"
+        app:layout_constraintTop_toBottomOf="@id/tvFoodAmount"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -160,7 +160,7 @@
         android:layout_marginBottom="16dp"
         android:scaleType="centerCrop"
         android:src="@drawable/take_pic_logo"
-        app:layout_constraintTop_toBottomOf="@id/edtFeedingSchedule"
+        app:layout_constraintTop_toBottomOf="@id/edtFoodAmount"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

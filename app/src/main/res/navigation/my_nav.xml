@@ -80,10 +80,33 @@
             android:name="vaccinationDates"
             app:argType="string" />
         <argument
-            android:name="feedingSchedule"
+            android:name="foodAmount"
             app:argType="string" />
         <argument
             android:name="petPicURL"
             app:argType="string" />
     </fragment>
+
+    <!-- SearchFragment -->
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.SearchFragment"
+        android:label="Search Pets"
+        tools:layout="@layout/fragment_search"
+        />
+
+    <!-- StatsFragment -->
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.StatisticsFragment"
+        android:label="Statistics"
+        tools:layout="@layout/fragment_statistics" />
+
+    <!-- AboutFragment -->
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
+
 </navigation>

@@ -6,7 +6,7 @@ data class Pets(
     val breed: String? = null,
     val name: String? = null,
     val vaccinationDates: String? = null,
-    val feedingSchedule: String? = null,
+    val foodAmount: String? = null,
     val petPicURL: String? = null
 ) {
     constructor() : this(null, null, null, null, null, null, null)
