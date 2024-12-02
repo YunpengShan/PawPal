@@ -10,6 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.adapter.RvPetsAdapter
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.FragmentHomeBinding
@@ -19,6 +21,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var petsList: ArrayList<Pets>
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseRef: DatabaseReference
     private lateinit var rvAdapter: RvPetsAdapter
     private lateinit var firebaseAuth: FirebaseAuth
@@ -31,6 +34,7 @@ class HomeFragment : Fragment() {
 
         // Initialize Firebase Auth, Database reference, and contact list
         firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
         val userId = firebaseAuth.currentUser?.uid
 
         if (userId == null) {
@@ -65,24 +69,22 @@ class HomeFragment : Fragment() {
             Toast.makeText(context, "User not logged in!", Toast.LENGTH_SHORT).show()
             return
         }
-
-        firebaseRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+        firestore.collection("pets")
+            .whereEqualTo("ownerID", userId)
+            .get()
+            .addOnSuccessListener { result ->
                 petsList.clear()
-                if (snapshot.exists()) {
-                    for (petSnap in snapshot.children) {
-                        val pet = petSnap.getValue(Pets::class.java)
-                        pet?.let { petsList.add(it) }
-                    }
+                for (doc in result) {
+                    var pet = doc.toObject(Pets::class.java)
+                    pet.id = doc.id
+                    pet?.let { petsList.add(it) }
                 }
                 // Notify adapter of data change
                 rvAdapter.notifyDataSetChanged()
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error fetching pets: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-        })
     }
 
     override fun onDestroyView() {

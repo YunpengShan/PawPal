@@ -1,31 +1,68 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/pp_bg"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvAppDetails"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="App Details: This is a pet management app."
-        android:textSize="18sp"
-        android:paddingBottom="8dp"
-        android:textStyle="bold"/>
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvStudentInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Student Information:\nYunpeng Shan\nDanielle Creary-Thomas\nRameez Arshad"
-        android:textSize="16sp"
-        android:paddingBottom="8dp"/>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            app:srcCompat="@drawable/pp_about" />
 
-    <TextView
-        android:id="@+id/tvAppPurpose"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Purpose of the App: This app is designed to help users manage their pets by tracking their details and information."
-        android:textSize="16sp"/>
+        <TextView
+            android:id="@+id/tvAppDetails2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:gravity="center_horizontal"
+            android:paddingBottom="8dp"
+            android:text="Paw Pal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#196E71"
+            android:textSize="60sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvAppDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:gravity="center_horizontal"
+            android:paddingBottom="8dp"
+            android:text="Pet Management App"
+            android:textColor="#4EBABC"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvStudentInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:gravity="center_horizontal"
+            android:paddingBottom="8dp"
+            android:text="Student Information:\nYunpeng Shan\nDanielle Creary-Thomas\nRameez Arshad"
+            android:textColor="#196E71"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvAppPurpose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:gravity="center_horizontal"
+            android:text="Purpose of the App: This app is designed to help users manage their pets by tracking their details and information."
+            android:textColor="#196E71"
+            android:textSize="16sp" />
+    </LinearLayout>
 
 </LinearLayout>

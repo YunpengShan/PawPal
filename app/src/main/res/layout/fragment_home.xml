@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/pp_bg"
     tools:context=".HomeFragment">
 
 
@@ -15,6 +16,7 @@
         android:layout_marginBottom="35dp"
         android:clickable="true"
         android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#E2EBEA"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

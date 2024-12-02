@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,10 +15,12 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.FragmentAddBinding
+import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.FeedSchedule
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.PetType
 import java.util.Calendar
@@ -49,7 +52,7 @@ class AddFragment : Fragment() {
         setupPetTypeSpinner()
         setupDatePicker() // Call the function to set up the date picker
 
-        binding.btnSend.setOnClickListener {
+        binding.btnSave.setOnClickListener {
             saveData(userId!!)
             findNavController().navigate(R.id.action_addFragment_to_homeFragment)
         }
@@ -59,7 +62,7 @@ class AddFragment : Fragment() {
             uri = it
         }
 
-        binding.btnPickImage.setOnClickListener {
+        binding.imgAdd.setOnClickListener {
             pickImage.launch("image/*")
         }
 
@@ -74,6 +77,32 @@ class AddFragment : Fragment() {
         )
         petTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerPetType.adapter = petTypeAdapter
+        // Set up the listener for spinner selection changes
+
+        binding.spinnerPetType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedPetType = PetType.values()[position] // Get the selected pet type
+                val drawableResId = getDrawableForPetType(selectedPetType) // Get corresponding drawable ID
+                binding.typeImageView.setImageResource(drawableResId) // Set the ImageView resource
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Optionally handle the case when no item is selected
+            }
+        }
+    }
+
+    // Helper function to map pet types to drawable resource IDs
+    private fun getDrawableForPetType(petType: PetType): Int {
+        return when (petType) {
+            PetType.DOG -> R.drawable.pp_dog
+            PetType.CAT -> R.drawable.pp_cat
+            PetType.BIRD -> R.drawable.pp_bird
+            PetType.FISH -> R.drawable.pp_fish
+            PetType.REPTILE -> R.drawable.pp_reptile
+            // Add other pet types and corresponding drawables
+            else -> R.drawable.pets // Fallback image
+        }
     }
 
     private fun setupDatePicker() {
@@ -98,6 +127,10 @@ class AddFragment : Fragment() {
         val typeDisplayName = binding.spinnerPetType.selectedItem.toString() // Get selected type
         val breed = binding.edtBreed.text.toString()
         val vaccinationDates = binding.edtVaccinationDates.text.toString()
+
+        val foodAM = binding.amCB.isChecked
+        val foodNoon = binding.noonCB.isChecked
+        val foodPM = binding.pmCB.isChecked
         val foodAmount = binding.edtFoodAmount.text.toString()
 
         if (name.isEmpty()) {
@@ -109,29 +142,37 @@ class AddFragment : Fragment() {
         val petType = PetType.values().find { it.displayName == typeDisplayName } ?: return
 
         val petId = firebaseDatabase.push().key!!
-        val petStoragePath = "images/$userId/$petId.jpg"
+        val petStoragePath = "petImages/$petId.jpg"
 
         uri?.let { imageUri ->
             storageRef.child(petStoragePath).putFile(imageUri)
                 .addOnSuccessListener { task ->
                     task.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { imageUrl ->
-                            val pet = Pets(
-                                id = petId,
-                                type = petType.toString(), // Save enum name to database
-                                breed = breed,
-                                name = name,
-                                vaccinationDates = vaccinationDates,
-                                foodAmount = foodAmount,
-                                petPicURL = imageUrl.toString()
+                            val pet: MutableMap<String, Any> = hashMapOf(
+                                "ownerID" to userId,
+                                "type" to petType.toString(),
+                                "breed" to breed,
+                                "name" to name,
+                                "vaccinationDates" to vaccinationDates,
+                                "petPicURL" to imageUrl.toString()
                             )
 
-                            // Save to Realtime Database
-                            firebaseDatabase.child(petId).setValue(pet)
-
                             // Save to Firestore
-                            firestore.collection("users").document(userId)
-                                .collection("pets").document(petId).set(pet)
+                            firestore.collection("pets").document(petId).set(pet)
+                                .addOnCompleteListener {
+                                    val feedSched: MutableMap<String, Any> = hashMapOf(
+                                        "petID" to petId,
+                                        "morning" to foodAM,
+                                        "noon" to foodNoon,
+                                        "night" to foodPM,
+                                        "amount" to foodAmount
+                                    )
+                                    firestore.collection("feedSched").add(feedSched)
+
+                                    firestore.collection("users").document(userId)
+                                        .update("NumPets", FieldValue.increment(1) )
+                                }
                         }
                 }
         }

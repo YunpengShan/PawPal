@@ -11,7 +11,8 @@
     <!-- Main Content -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/pp_bg">
 
         <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
@@ -29,11 +30,11 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="?attr/actionBarSize"
-            app:navGraph="@navigation/my_nav"
+            android:background="#F8F8F8"
             app:defaultNavHost="true"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:navGraph="@navigation/my_nav" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

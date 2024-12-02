@@ -1,48 +1,81 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/pp_bg"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvTitle"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Sign In"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="510dp"
+        android:background="#FFFFFF"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/etEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email"
-        android:inputType="textEmailAddress" />
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="match_parent"
+            android:layout_height="126dp"
+            app:srcCompat="@drawable/pp_pets" />
 
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:gravity="center"
+            android:text="Sign In"
+            android:textColor="#1E6D7C"
+            android:textSize="60sp"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnSignIn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Sign In" />
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:textColor="#1E6D7C" />
 
-    <TextView
-        android:id="@+id/tvSignUpPrompt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="Don't have an account? Click here to sign up"
-        android:textColor="@color/blue"
-        android:textSize="14sp" />
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="314dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textColor="#1E6D7C" />
+
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="312dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#1B687A"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:text="Sign In"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tvSignUpPrompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:gravity="center"
+            android:text="Don't have an account? Click here to sign up"
+            android:textColor="#1E6D7C"
+            android:textSize="18sp" />
+    </LinearLayout>
+
 </LinearLayout>

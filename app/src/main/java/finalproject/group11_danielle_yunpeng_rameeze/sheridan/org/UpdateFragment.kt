@@ -3,6 +3,7 @@ package finalproject.group11_danielle_yunpeng_rameeze.sheridan.org
 import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.FragmentUpdateBinding
+import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.FeedSchedule
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.PetType
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 import java.util.Calendar
@@ -36,19 +38,23 @@ class UpdateFragment : Fragment() {
 
     private var uri: Uri? = null
     private var imageUrl: String? = null
+    private lateinit var feedSched:FeedSchedule
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUpdateBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         storageRef = FirebaseStorage.getInstance().reference
 
         val userId = firebaseAuth.currentUser?.uid
-        firebaseDatabase = FirebaseDatabase.getInstance().getReference("users/$userId/pets")
 
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
             binding.imgUpdate.setImageURI(it)
@@ -56,11 +62,16 @@ class UpdateFragment : Fragment() {
         }
         imageUrl = args.petPicURL
 
+        fetchFeedSched()
+
         binding.apply {
             edtUpdateName.setText(args.name)
             edtUpdateBreed.setText(args.breed)
             edtUpdateVaccinationDates.setText(args.vaccinationDates)
-            edtUpdateFoodAmount.setText(args.foodAmount)
+            amUpdateCB.isChecked = feedSched.morning
+            noonUpdateCB.isChecked = feedSched.noon
+            pmUpdateCB.isChecked =feedSched.night
+            edtUpdateFoodAmount.setText(feedSched.amount)
             Picasso.get().load(imageUrl).into(imgUpdate)
 
             // Setup Spinner and DatePicker
@@ -77,7 +88,6 @@ class UpdateFragment : Fragment() {
             }
         }
 
-        return binding.root
     }
 
     private fun setupPetTypeSpinner(selectedType: String) {
@@ -113,12 +123,34 @@ class UpdateFragment : Fragment() {
         }
     }
 
+    private fun fetchFeedSched(){
+        firestore.collection("feedSched")
+            .whereEqualTo("petID", args.id)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    // Assuming there's only one document matching the query
+                    feedSched = querySnapshot.documents.first().toObject(FeedSchedule::class.java)!!
+                    Log.d("Firestore", "Feed Schedule: $feedSched")
+                } else {
+                    Log.d("Firestore", "No matching feed schedule found for petID: ${args.id}")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error fetching feed schedule: ${exception.message}", exception)
+            }
+    }
+
     private fun updateData(userId: String) {
         val name = binding.edtUpdateName.text.toString()
         val breed = binding.edtUpdateBreed.text.toString()
         val vaccinationDates = binding.edtUpdateVaccinationDates.text.toString()
-        val foodAmount = binding.edtUpdateFoodAmount.text.toString()
         val petTypeDisplayName = binding.spinnerPetTypeUpdate.selectedItem.toString()
+
+        val foodAM = binding.amUpdateCB.isChecked
+        val foodNoon = binding.noonUpdateCB.isChecked
+        val foodPM = binding.pmUpdateCB.isChecked
+        val foodAmount = binding.edtUpdateFoodAmount.text.toString()
 
         if (name.isEmpty()) {
             binding.edtUpdateName.error = "Enter pet name"
@@ -136,50 +168,56 @@ class UpdateFragment : Fragment() {
                 .addOnSuccessListener { task ->
                     task.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { imageUrl ->
-                            val updatedPet = Pets(
-                                id = petId,
-                                type = petType.toString(),
-                                breed = breed,
-                                name = name,
-                                vaccinationDates = vaccinationDates,
-                                foodAmount = foodAmount,
-                                petPicURL = imageUrl.toString()
+                            val pet: MutableMap<String, Any> = hashMapOf(
+                                "ownerID" to userId,
+                                "type" to petType.toString(),
+                                "breed" to breed,
+                                "name" to name,
+                                "vaccinationDates" to vaccinationDates,
+                                "petPicURL" to imageUrl.toString()
                             )
-                            saveUpdatedPet(userId, updatedPet)
+
+                            // Save to Firestore
+                            firestore.collection("pets").document(petId).set(pet)
+                                .addOnCompleteListener {
+                                    val feedSched: MutableMap<String, Any> = hashMapOf(
+                                        "petID" to petId,
+                                        "morning" to foodAM,
+                                        "noon" to foodNoon,
+                                        "night" to foodPM,
+                                        "amount" to foodAmount
+                                    )
+                                    firestore.collection("feedSched")
+                                        .document(this.feedSched.id!!).set(feedSched)
+                                }
                         }
                 }
         } ?: run {
-            val updatedPet = Pets(
-                id = petId,
-                type = petType.toString(),
-                breed = breed,
-                name = name,
-                vaccinationDates = vaccinationDates,
-                foodAmount = foodAmount,
-                petPicURL = imageUrl
+            val pet: MutableMap<String, Any> = hashMapOf(
+                "ownerID" to userId,
+                "type" to petType.toString(),
+                "breed" to breed,
+                "name" to name,
+                "vaccinationDates" to vaccinationDates,
+                "petPicURL" to imageUrl.toString()
             )
-            saveUpdatedPet(userId, updatedPet)
+
+            // Save to Firestore
+            firestore.collection("pets").document(petId).set(pet)
+                .addOnCompleteListener {
+                    val feedSched: MutableMap<String, Any> = hashMapOf(
+                        "petID" to petId,
+                        "morning" to foodAM,
+                        "noon" to foodNoon,
+                        "night" to foodPM,
+                        "amount" to foodAmount
+                    )
+                    firestore.collection("feedSched")
+                        .document(this.feedSched.id!!).set(feedSched)
+                }
         }
     }
 
-    private fun saveUpdatedPet(userId: String, pet: Pets) {
-        firebaseDatabase.child(pet.id.toString()).setValue(pet)
-            .addOnCompleteListener {
-                Toast.makeText(context, "Pet updated in Realtime Database!", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { error ->
-                Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-
-        firestore.collection("users").document(userId)
-            .collection("pets").document(pet.id.toString()).set(pet)
-            .addOnCompleteListener {
-                Toast.makeText(context, "Pet updated in Firestore!", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { error ->
-                Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,66 +1,95 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/white">
+    android:background="@drawable/pp_bg"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:background="#FFFFFF"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <!-- Title -->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:fontFamily="@font/baloo_bhaijaan"
+            android:gravity="center_horizontal"
+            android:text="Statistics"
+            android:textColor="#125152"
+            android:textSize="60sp" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="319dp"
+            android:layout_height="5dp"
+            android:background="?android:attr/listDivider" />
+
         <TextView
             android:id="@+id/tvStatisticsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pet Distribution by Type"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/baloo_bhaijaan"
             android:gravity="center"
-            android:layout_marginBottom="32dp" />
+            android:text="Pet Distribution by Type"
+            android:textColor="#217273"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <!-- Pet Type Statistics -->
         <TextView
             android:id="@+id/tvDogCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/baloo_bhaijaan"
             android:text="Dogs: 0"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#217273"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvCatCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/baloo_bhaijaan"
             android:text="Cats: 0"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#217273"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvBirdCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/baloo_bhaijaan"
             android:text="Birds: 0"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#217273"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvReptileCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/baloo_bhaijaan"
             android:text="Reptiles: 0"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#217273"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvFishCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/baloo_bhaijaan"
             android:text="Fish: 0"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#217273"
+            android:textSize="18sp" />
 
     </LinearLayout>
 </ScrollView>

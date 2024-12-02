@@ -80,9 +80,6 @@
             android:name="vaccinationDates"
             app:argType="string" />
         <argument
-            android:name="foodAmount"
-            app:argType="string" />
-        <argument
             android:name="petPicURL"
             app:argType="string" />
     </fragment>

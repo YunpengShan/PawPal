@@ -13,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.HomeFragmentDirections
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.RvPetsItemBinding
+import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.FeedSchedule
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 
 class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter<RvPetsAdapter.ViewHolder>() {
@@ -31,14 +32,15 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentItem = petList[position]
+
         holder.apply {
             binding.apply {
                 // Populate the TextViews with pet details
                 tvNameItem.text = currentItem.name ?: "Unknown"
                 tvBreedItem.text = currentItem.breed ?: "N/A"
                 tvTypeItem.text = currentItem.type ?: "N/A"
-                tvFoodAmountItem.text = currentItem.foodAmount ?: "N/A"
                 tvVaccinationDatesItem.text = currentItem.vaccinationDates ?: "N/A"
+
 
                 // Load the pet's image using Picasso
                 Picasso.get().load(currentItem.petPicURL).into(imgItem)
@@ -51,7 +53,6 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
                         currentItem.type ?: "",
                         currentItem.breed ?: "",
                         currentItem.vaccinationDates ?: "",
-                        currentItem.foodAmount ?: "",
                         currentItem.petPicURL ?: ""
                     )
                     findNavController(holder.itemView).navigate(action)
@@ -90,7 +91,6 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
 
         val firebaseRef = FirebaseDatabase.getInstance().getReference("users/$userId/pets")
         val firestoreRef = FirebaseFirestore.getInstance()
-        val storageRef = if (!petPicURL.isNullOrEmpty()) FirebaseStorage.getInstance().getReferenceFromUrl(petPicURL) else null
 
         // Delete from Realtime Database
         firebaseRef.child(petId).removeValue()
@@ -111,14 +111,6 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
                 Toast.makeText(context, "Failed to delete from Firestore: ${error.message}", Toast.LENGTH_SHORT).show()
             }
 
-        // Delete the image from Firebase Storage
-        storageRef?.delete()
-            ?.addOnCompleteListener {
-                Toast.makeText(context, "Image deleted successfully", Toast.LENGTH_SHORT).show()
-            }
-            ?.addOnFailureListener { error ->
-                Toast.makeText(context, "Failed to delete image: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
     }
 
 }
