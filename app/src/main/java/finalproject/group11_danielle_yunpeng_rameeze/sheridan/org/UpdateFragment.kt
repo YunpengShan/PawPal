@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -39,6 +40,20 @@ class UpdateFragment : Fragment() {
     private var uri: Uri? = null
     private var imageUrl: String? = null
     private lateinit var feedSched:FeedSchedule
+    private lateinit var userID:String
+
+    // Declare the ActivityResultLauncher globally
+    private lateinit var pickImageLauncher: ActivityResultLauncher<String>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Initialize the ActivityResultLauncher in onCreate
+        pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            binding.imgUpdate.setImageURI(uri)
+            this.uri = uri
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,39 +69,10 @@ class UpdateFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         storageRef = FirebaseStorage.getInstance().reference
 
-        val userId = firebaseAuth.currentUser?.uid
-
-        val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
-            binding.imgUpdate.setImageURI(it)
-            uri = it
-        }
+        userID = firebaseAuth.currentUser?.uid.toString()
         imageUrl = args.petPicURL
 
         fetchFeedSched()
-
-        binding.apply {
-            edtUpdateName.setText(args.name)
-            edtUpdateBreed.setText(args.breed)
-            edtUpdateVaccinationDates.setText(args.vaccinationDates)
-            amUpdateCB.isChecked = feedSched.morning
-            noonUpdateCB.isChecked = feedSched.noon
-            pmUpdateCB.isChecked =feedSched.night
-            edtUpdateFoodAmount.setText(feedSched.amount)
-            Picasso.get().load(imageUrl).into(imgUpdate)
-
-            // Setup Spinner and DatePicker
-            setupPetTypeSpinner(args.type)
-            setupDatePicker()
-
-            btnUpdate.setOnClickListener {
-                updateData(userId!!)
-                findNavController().navigate(R.id.action_updateFragment_to_homeFragment)
-            }
-
-            imgUpdate.setOnClickListener {
-                pickImage.launch("image/*")
-            }
-        }
 
     }
 
@@ -124,21 +110,62 @@ class UpdateFragment : Fragment() {
     }
 
     private fun fetchFeedSched(){
-        firestore.collection("feedSched")
-            .whereEqualTo("petID", args.id)
+        firestore.collection("feedSched").document(args.feedSchedID)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    // Assuming there's only one document matching the query
-                    feedSched = querySnapshot.documents.first().toObject(FeedSchedule::class.java)!!
-                    Log.d("Firestore", "Feed Schedule: $feedSched")
-                } else {
-                    Log.d("Firestore", "No matching feed schedule found for petID: ${args.id}")
-                }
+                // Assuming there's only one document matching the query
+                feedSched = querySnapshot.toObject(FeedSchedule::class.java)!!
+                updateUI()
+                Log.d("Firestore", "Feed Schedule: $feedSched")
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Error fetching feed schedule: ${exception.message}", exception)
             }
+    }
+
+    private fun updateUI(){
+
+        binding.apply {
+            edtUpdateName.setText(args.name)
+            edtUpdateBreed.setText(args.breed)
+
+            edtUpdateVaccinationDates.setText(args.vaccinationDates)
+
+            amUpdateCB.isChecked = feedSched.morning
+            noonUpdateCB.isChecked = feedSched.noon
+            pmUpdateCB.isChecked =feedSched.night
+
+            edtUpdateFoodAmount.setText(feedSched.amount)
+            Picasso.get().load(imageUrl).into(imgUpdate)
+
+            // Setup Spinner and DatePicker
+            setupPetTypeSpinner(args.type)
+            typeImageView.setImageResource(getDrawableForPetType(args.type!!))
+
+            setupDatePicker()
+
+            btnUpdate.setOnClickListener {
+                updateData(userID)
+                findNavController().navigate(R.id.action_updateFragment_to_homeFragment)
+            }
+
+            imgUpdate.setOnClickListener {
+                pickImageLauncher.launch("image/*")
+            }
+        }
+    }
+
+    // Helper function to map pet types to drawable resource IDs
+    private fun getDrawableForPetType(petType: String): Int {
+        return when (petType.uppercase()) {
+            "DOG" -> R.drawable.pp_dog
+            "CAT" -> R.drawable.pp_cat
+            "BIRD" -> R.drawable.pp_bird
+            "FISH" -> R.drawable.pp_fish
+            "REPTILE" -> R.drawable.pp_reptile
+            // Add other pet types and corresponding drawables
+            else -> R.drawable.pets // Fallback image
+        }
     }
 
     private fun updateData(userId: String) {
@@ -164,56 +191,70 @@ class UpdateFragment : Fragment() {
         val petStoragePath = "images/$userId/$petId.jpg"
 
         uri?.let {
+            //update pet image
             storageRef.child(petStoragePath).putFile(it)
                 .addOnSuccessListener { task ->
                     task.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { imageUrl ->
-                            val pet: MutableMap<String, Any> = hashMapOf(
-                                "ownerID" to userId,
-                                "type" to petType.toString(),
-                                "breed" to breed,
-                                "name" to name,
-                                "vaccinationDates" to vaccinationDates,
-                                "petPicURL" to imageUrl.toString()
-                            )
 
-                            // Save to Firestore
-                            firestore.collection("pets").document(petId).set(pet)
-                                .addOnCompleteListener {
-                                    val feedSched: MutableMap<String, Any> = hashMapOf(
-                                        "petID" to petId,
-                                        "morning" to foodAM,
-                                        "noon" to foodNoon,
-                                        "night" to foodPM,
-                                        "amount" to foodAmount
+                            // Save Feed Schedule to Firestore
+                            val feedSched: MutableMap<String, Any> = hashMapOf(
+                                "morning" to foodAM,
+                                "noon" to foodNoon,
+                                "night" to foodPM,
+                                "amount" to foodAmount
+                            )
+                            firestore.collection("feedSched").document(args.feedSchedID)
+                                .update(feedSched)
+                                .addOnSuccessListener { fsRef ->
+                                    // Save Pet to Firestore w/ newFSID
+                                    val pet: MutableMap<String, Any> = hashMapOf(
+                                        "ownerID" to userId,
+                                        "type" to petType.toString(),
+                                        "breed" to breed,
+                                        "name" to name,
+                                        "vaccinationDates" to vaccinationDates,
+                                        "feedSchedID" to args.feedSchedID,
+                                        "petPicURL" to imageUrl.toString()
+
                                     )
-                                    firestore.collection("feedSched")
-                                        .document(this.feedSched.id!!).set(feedSched)
+
+                                    firestore.collection("pets").document(petId).set(pet)
+                                        .addOnCompleteListener {
+                                            Toast.makeText(requireContext(), "Pet Updated", Toast.LENGTH_SHORT).show()
+                                        }
                                 }
                         }
                 }
         } ?: run {
-            val pet: MutableMap<String, Any> = hashMapOf(
-                "ownerID" to userId,
-                "type" to petType.toString(),
-                "breed" to breed,
-                "name" to name,
-                "vaccinationDates" to vaccinationDates,
-                "petPicURL" to imageUrl.toString()
+            //no image change
+            // Save Feed Schedule to Firestore
+            val feedSched: MutableMap<String, Any> = hashMapOf(
+                "morning" to foodAM,
+                "noon" to foodNoon,
+                "night" to foodPM,
+                "amount" to foodAmount
             )
+            firestore.collection("feedSched").document(args.feedSchedID)
+                .update(feedSched)
+                .addOnSuccessListener { fsRef ->
 
-            // Save to Firestore
-            firestore.collection("pets").document(petId).set(pet)
-                .addOnCompleteListener {
-                    val feedSched: MutableMap<String, Any> = hashMapOf(
-                        "petID" to petId,
-                        "morning" to foodAM,
-                        "noon" to foodNoon,
-                        "night" to foodPM,
-                        "amount" to foodAmount
+                    // Save Pet to Firestore w/ newFSID
+                    val pet: MutableMap<String, Any> = hashMapOf(
+                        "ownerID" to userId,
+                        "type" to petType.toString(),
+                        "breed" to breed,
+                        "name" to name,
+                        "vaccinationDates" to vaccinationDates,
+                        "feedSchedID" to args.feedSchedID,
+                        "petPicURL" to imageUrl.toString()
+
                     )
-                    firestore.collection("feedSched")
-                        .document(this.feedSched.id!!).set(feedSched)
+
+                    firestore.collection("pets").document(petId).set(pet)
+                        .addOnCompleteListener {
+                            Toast.makeText(requireContext(), "Pet Updated", Toast.LENGTH_SHORT).show()
+                        }
                 }
         }
     }

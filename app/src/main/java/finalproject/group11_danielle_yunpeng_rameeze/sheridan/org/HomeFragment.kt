@@ -62,6 +62,12 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        fetchData() // Re-fetch data and update the RecyclerView
+    }
+
+
     private fun fetchData() {
         val userId = firebaseAuth.currentUser?.uid
 

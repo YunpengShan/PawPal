@@ -14,7 +14,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="617dp"
+        android:layout_height="511dp"
         android:background="#E0FFFFFF"
         android:gravity="center_horizontal"
         android:orientation="vertical">
@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/tvAddPetTitle"
             android:layout_width="374dp"
-            android:layout_height="wrap_content"
+            android:layout_height="47dp"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Add a Pet"
@@ -35,7 +35,7 @@
             android:id="@+id/imgUpdate"
             android:layout_width="match_parent"
             android:layout_height="97dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="5dp"
             app:srcCompat="@drawable/take_pic_logo" />
 
         <View
@@ -46,24 +46,24 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="91dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="78dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="75dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tvPetType"
-                        android:layout_width="110dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="@font/baloo_bhaijaan"
@@ -75,14 +75,13 @@
                     <Spinner
                         android:id="@+id/spinnerPetTypeUpdate"
                         android:layout_width="wrap_content"
-                        android:layout_height="41dp"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_height="34dp" />
                 </LinearLayout>
 
                 <ImageView
                     android:id="@+id/typeImageView"
                     android:layout_width="97dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="73dp"
                     android:layout_weight="1"
                     android:src="@drawable/pets" />
 
@@ -90,7 +89,7 @@
 
             <LinearLayout
                 android:layout_width="158dp"
-                android:layout_height="match_parent"
+                android:layout_height="80dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -108,7 +107,6 @@
                     android:id="@+id/edtUpdateBreed"
                     android:layout_width="155dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
                     android:hint="Enter breed"
                     android:inputType="text"
                     android:textSize="16sp" />
@@ -126,8 +124,7 @@
             android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginTop="6dp"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Pet Name"
             android:textColor="#1F6862"
@@ -137,9 +134,8 @@
         <EditText
             android:id="@+id/edtUpdateName"
             android:layout_width="329dp"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="12dp"
             android:hint="Enter pet name"
             android:inputType="text"
             android:textSize="16sp" />
@@ -149,7 +145,6 @@
             android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="4dp"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Vaccination Dates"
             android:textColor="#1F6862"
@@ -159,9 +154,9 @@
         <EditText
             android:id="@+id/edtUpdateVaccinationDates"
             android:layout_width="329dp"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="6dp"
             android:clickable="true"
             android:focusable="false"
             android:hint="Select dates (e.g., 2023-01-01)"
@@ -179,7 +174,7 @@
             android:layout_width="322dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Feeding Schedule"
@@ -290,7 +285,7 @@
         android:id="@+id/btnUpdate"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="#083E3C"
         android:text="Update"
         android:textSize="20sp" />

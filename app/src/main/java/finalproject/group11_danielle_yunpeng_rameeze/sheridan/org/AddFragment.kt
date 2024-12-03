@@ -33,6 +33,7 @@ class AddFragment : Fragment() {
     private lateinit var firebaseDatabase: DatabaseReference
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storageRef: StorageReference
+    private lateinit var newFSID: String
 
     private var uri: Uri? = null
 
@@ -149,29 +150,36 @@ class AddFragment : Fragment() {
                 .addOnSuccessListener { task ->
                     task.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { imageUrl ->
-                            val pet: MutableMap<String, Any> = hashMapOf(
-                                "ownerID" to userId,
-                                "type" to petType.toString(),
-                                "breed" to breed,
-                                "name" to name,
-                                "vaccinationDates" to vaccinationDates,
-                                "petPicURL" to imageUrl.toString()
+                            // Save Feed Schedule to Firestore
+                            val feedSched: MutableMap<String, Any> = hashMapOf(
+                                "morning" to foodAM,
+                                "noon" to foodNoon,
+                                "night" to foodPM,
+                                "amount" to foodAmount
                             )
+                            firestore.collection("feedSched").add(feedSched)
+                                .addOnSuccessListener { fsRef ->
+                                    newFSID = fsRef.id
 
-                            // Save to Firestore
-                            firestore.collection("pets").document(petId).set(pet)
-                                .addOnCompleteListener {
-                                    val feedSched: MutableMap<String, Any> = hashMapOf(
-                                        "petID" to petId,
-                                        "morning" to foodAM,
-                                        "noon" to foodNoon,
-                                        "night" to foodPM,
-                                        "amount" to foodAmount
+                                    // Save Pet to Firestore w/ newFSID
+                                    val pet: MutableMap<String, Any> = hashMapOf(
+                                        "ownerID" to userId,
+                                        "type" to petType.toString(),
+                                        "breed" to breed,
+                                        "name" to name,
+                                        "vaccinationDates" to vaccinationDates,
+                                        "feedSchedID" to newFSID,
+                                        "petPicURL" to imageUrl.toString()
+
                                     )
-                                    firestore.collection("feedSched").add(feedSched)
 
-                                    firestore.collection("users").document(userId)
-                                        .update("NumPets", FieldValue.increment(1) )
+                                    firestore.collection("pets").document(petId).set(pet)
+                                        .addOnCompleteListener {
+
+                                            // Increment user's num pets
+                                            firestore.collection("users").document(userId)
+                                                .update("NumPets", FieldValue.increment(1) )
+                                        }
                                 }
                         }
                 }

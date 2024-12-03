@@ -1,6 +1,7 @@
 package finalproject.group11_danielle_yunpeng_rameeze.sheridan.org
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import androidx.appcompat.widget.SearchView
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class SearchFragment : Fragment() {
@@ -19,9 +21,10 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var firebaseDatabase: DatabaseReference
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var petList: ArrayList<Pets>
     private lateinit var adapter: RvPetsAdapter
+    private lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,8 +34,8 @@ class SearchFragment : Fragment() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-        val userId = firebaseAuth.currentUser?.uid
-        firebaseDatabase = FirebaseDatabase.getInstance().getReference("users/$userId/pets")
+        userId = firebaseAuth.currentUser?.uid.toString()
+        firestore = FirebaseFirestore.getInstance()
 
         setupRecyclerView()
         fetchData()
@@ -62,22 +65,21 @@ class SearchFragment : Fragment() {
     }
 
     private fun fetchData() {
-        firebaseDatabase.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                petList.clear()
-                for (data in snapshot.children) {
-                    val pet = data.getValue(Pets::class.java)
-                    if (pet != null) {
-                        petList.add(pet)
-                    }
+        firestore.collection("pets")
+            .whereEqualTo("ownerID", userId) // Filter pets by the owner's user ID
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                petList.clear() // Clear the current list to avoid duplicates
+                for (document in querySnapshot) {
+                    val pet = document.toObject(Pets::class.java) // Convert Firestore document to Pets object
+                    petList.add(pet) // Add the pet to the list
                 }
-                adapter.notifyDataSetChanged()
+                adapter.notifyDataSetChanged() // Notify the adapter of dataset changes
             }
-
-            override fun onCancelled(error: DatabaseError) {
+            .addOnFailureListener { exception ->
                 // Handle error
+                Log.e("Firestore", "Error fetching pets: ${exception.message}")
             }
-        })
     }
 
     private fun filterPets(query: String?) {

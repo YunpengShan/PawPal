@@ -7,5 +7,6 @@ data class Pets(
     val breed: String? = null,
     val name: String? = null,
     val vaccinationDates: String? = null,
+    val feedSchedID: String? = null,
     val petPicURL: String? = null
 )
