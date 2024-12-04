@@ -1,7 +1,7 @@
 package finalproject.group11_danielle_yunpeng_rameeze.sheridan.org
 
 import android.os.Bundle
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -23,19 +23,15 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set Toolbar as ActionBar
         setSupportActionBar(binding.toolbar)
 
-        // Initialize NavHostFragment and NavController
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Initialize DrawerLayout and NavigationView
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navigationView: NavigationView = binding.navView
 
-        // Configure AppBar with DrawerLayout
         appBarConfiguration = AppBarConfiguration(
             setOf(R.id.homeFragment),
             drawerLayout
@@ -43,16 +39,13 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navigationView, navController)
 
-        // Handle navigation drawer menu item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_home -> {
-                    // Navigate to Home
                     navController.navigate(R.id.homeFragment)
                 }
                 R.id.nav_logout -> {
-                    // Handle Logout
-                    Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show()
+                    showAlertDialog("Logged Out", "You have been logged out.")
                     navController.navigate(R.id.signInFragment)
                 }
                 R.id.nav_search -> {
@@ -69,7 +62,6 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // Hide back button in SignInFragment and SignUpFragment
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.signInFragment || destination.id == R.id.signUpFragment) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false) // Hide the back button
@@ -77,6 +69,14 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.setDisplayHomeAsUpEnabled(true) // Show the back button
             }
         }
+    }
+
+    private fun showAlertDialog(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     override fun onSupportNavigateUp(): Boolean {

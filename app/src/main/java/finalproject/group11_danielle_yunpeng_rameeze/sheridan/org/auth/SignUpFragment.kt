@@ -4,12 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
+import android.util.Log // Keeping log messages
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog // For dialogs
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,6 +29,7 @@ class SignUpFragment : Fragment() {
     private lateinit var fbStorage: FirebaseStorage
     private lateinit var userid: String
     private var picurl = ""
+    private val viewModel: SignUpViewModel by viewModels() // ViewModel for data persistence
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +41,16 @@ class SignUpFragment : Fragment() {
         dbUsers = FirebaseFirestore.getInstance()
         fbStorage = FirebaseStorage.getInstance()
 
+        // Restore data from ViewModel
+        binding.etName.setText(viewModel.name)
+        binding.etEmail.setText(viewModel.email)
+        binding.etPassword.setText(viewModel.password)
+        binding.etPhone.setText(viewModel.phone)
+        viewModel.profilePicUriString?.let {
+            profilePicUri = Uri.parse(it)
+            binding.profileImageView.setImageURI(profilePicUri)
+        }
+
         // Profile picture picker
         binding.profileImageView.setOnClickListener {
             openImagePicker()
@@ -47,10 +59,10 @@ class SignUpFragment : Fragment() {
         binding.btnSignUp.setOnClickListener {
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
-            if (email.isNotEmpty() && password.isNotEmpty() && profilePicUri.toString().isNotEmpty()) {
+            if (email.isNotEmpty() && password.isNotEmpty() && profilePicUri != null) {
                 signUpUser(email, password)
             } else {
-                Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                showAlertDialog("Warning", "Please fill all fields")
             }
         }
 
@@ -60,6 +72,7 @@ class SignUpFragment : Fragment() {
 
         return binding.root
     }
+
 
     private fun openImagePicker() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -84,17 +97,24 @@ class SignUpFragment : Fragment() {
                     storageRef.downloadUrl
                         .addOnSuccessListener { downloadUri ->
                             picurl = downloadUri.toString()
-                            // Handle further actions if needed, like updating the UI or database
+                            Log.d("UploadProfilePicture", "Download URL: $picurl")
+                            // After obtaining the download URL, proceed to save user data
+                            saveUserData()
                         }
                         .addOnFailureListener { exception ->
                             // Handle failure in retrieving the download URL
                             Log.e("UploadProfilePicture", "Failed to get download URL", exception)
+                            showAlertDialog("Error", "Failed to get profile picture URL.")
                         }
                 }
                 .addOnFailureListener { exception ->
                     // Handle failure in uploading the file
                     Log.e("UploadProfilePicture", "Failed to upload profile picture", exception)
+                    showAlertDialog("Error", "Failed to upload profile picture.")
                 }
+        } ?: run {
+            // If profilePicUri is null, proceed to save user data without picture
+            saveUserData()
         }
     }
 
@@ -102,36 +122,54 @@ class SignUpFragment : Fragment() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    //get user id
+                    // Get user ID
                     userid = auth.currentUser!!.uid
-                    //upload profile pic and set pic url
+                    // Upload profile pic and set pic URL, then save user data
                     uploadProfilePictureToStorage()
-
-
-                    val user: MutableMap<String, Any> = HashMap()
-                    user["name"] = binding.etName.text.toString()
-                    user["NumPets"] = 0
-                    user["email"] = binding.etEmail.text.toString()
-                    user["phone"] = binding.etPhone.text.toString()
-                    user["picUrl"] = picurl
-
-
-                    dbUsers.collection("users")
-                        .document(userid)
-                        .set(user)
-                        .addOnSuccessListener {
-                            Toast.makeText(context, "Sign-Up Successful", Toast.LENGTH_SHORT).show()
-                            findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
-
-                        }
                 } else {
-                    Toast.makeText(context, "Sign-Up Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    showAlertDialog("Sign-Up Failed", task.exception?.message ?: "Unknown error")
                 }
             }
     }
 
+    private fun saveUserData() {
+        val user: MutableMap<String, Any> = HashMap()
+        user["name"] = binding.etName.text.toString()
+        user["NumPets"] = 0
+        user["email"] = binding.etEmail.text.toString()
+        user["phone"] = binding.etPhone.text.toString()
+        user["picUrl"] = picurl
+
+        dbUsers.collection("users")
+            .document(userid)
+            .set(user)
+            .addOnSuccessListener {
+                showAlertDialog("Success", "Sign-Up Successful")
+                findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("SaveUserData", "Failed to save user data", exception)
+                showAlertDialog("Error", "Failed to save user data.")
+            }
+    }
+
+    // Updated function to accept title and message
+    private fun showAlertDialog(title: String, message: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        // Save data to ViewModel before destroying the view
+        viewModel.name = binding.etName.text.toString()
+        viewModel.email = binding.etEmail.text.toString()
+        viewModel.password = binding.etPassword.text.toString()
+        viewModel.phone = binding.etPhone.text.toString()
+        viewModel.profilePicUriString = profilePicUri?.toString()
+        _binding = null // Avoid memory leaks by setting binding to null
     }
+
 }

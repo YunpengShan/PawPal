@@ -5,11 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -18,7 +17,6 @@ import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.HomeFragmentDi
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.R
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.RvPetsItemBinding
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.FeedSchedule
-import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.PetType
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 
 class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter<RvPetsAdapter.ViewHolder>() {
@@ -28,7 +26,6 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             RvPetsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
         )
     }
 
@@ -110,7 +107,6 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
             "BIRD" -> R.drawable.pp_bird
             "FISH" -> R.drawable.pp_fish
             "REPTILE" -> R.drawable.pp_reptile
-            // Add other pet types and corresponding drawables
             else -> R.drawable.pets // Fallback image
         }
     }
@@ -141,7 +137,7 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
         val userId = firebaseAuth.currentUser?.uid
 
         if (userId.isNullOrEmpty()) {
-            Toast.makeText(context, "User not logged in!", Toast.LENGTH_SHORT).show()
+            showAlertDialog(context, "Error", "User not logged in!")
             return
         }
 
@@ -149,33 +145,35 @@ class RvPetsAdapter(private val petList: ArrayList<Pets>) : RecyclerView.Adapter
         val storage = FirebaseStorage.getInstance().reference
 
         // Delete from Firestore
-        //Delete Feeding Schedule
         if (fsID != null) {
             firestoreRef.collection("feedSched").document(fsID).delete()
                 .addOnSuccessListener {
-                    //Decrement User Num Pets
+                    // Decrement User Num Pets
                     firestoreRef.collection("users").document(userId)
                         .update("NumPets", FieldValue.increment(-1))
                         .addOnCompleteListener {
-                            //Delete Pet Image from Storage
+                            // Delete Pet Image from Storage
                             storage.child("petImages/$petId.jpg").delete()
                                 .addOnSuccessListener {
-                                    //Delete pet
+                                    // Delete pet
                                     firestoreRef.collection("pets").document(petId).delete()
                                         .addOnCompleteListener {
-                                            Toast.makeText(context, "Deleted from Firestore", Toast.LENGTH_SHORT).show()
+                                            showAlertDialog(context, "Success", "Deleted from Firestore")
                                         }
                                         .addOnFailureListener { error ->
-                                            Toast.makeText(context, "Failed to delete from Firestore: ${error.message}", Toast.LENGTH_SHORT).show()
+                                            showAlertDialog(context, "Error", "Failed to delete from Firestore: ${error.message}")
                                         }
                                 }
-
                         }
-
                 }
         }
-
-
     }
 
+    private fun showAlertDialog(context: Context, title: String, message: String) {
+        AlertDialog.Builder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
 }
