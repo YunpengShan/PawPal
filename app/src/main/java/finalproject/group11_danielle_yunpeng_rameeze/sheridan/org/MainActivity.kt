@@ -1,5 +1,4 @@
 package finalproject.group11_danielle_yunpeng_rameeze.sheridan.org
-
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
