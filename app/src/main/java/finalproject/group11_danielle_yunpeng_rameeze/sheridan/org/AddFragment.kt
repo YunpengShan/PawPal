@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -20,8 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.FragmentAddBinding
-import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.FeedSchedule
-import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.PetType
 import java.util.Calendar
 
@@ -54,8 +52,12 @@ class AddFragment : Fragment() {
         setupDatePicker() // Call the function to set up the date picker
 
         binding.btnSave.setOnClickListener {
-            saveData(userId!!)
-            findNavController().navigate(R.id.action_addFragment_to_homeFragment)
+            if (userId != null) {
+                saveData(userId)
+                findNavController().navigate(R.id.action_addFragment_to_homeFragment)
+            } else {
+                showAlertDialog("Error", "User not logged in!")
+            }
         }
 
         val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) {
@@ -78,7 +80,6 @@ class AddFragment : Fragment() {
         )
         petTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerPetType.adapter = petTypeAdapter
-        // Set up the listener for spinner selection changes
 
         binding.spinnerPetType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -93,7 +94,6 @@ class AddFragment : Fragment() {
         }
     }
 
-    // Helper function to map pet types to drawable resource IDs
     private fun getDrawableForPetType(petType: PetType): Int {
         return when (petType) {
             PetType.DOG -> R.drawable.pp_dog
@@ -101,7 +101,6 @@ class AddFragment : Fragment() {
             PetType.BIRD -> R.drawable.pp_bird
             PetType.FISH -> R.drawable.pp_fish
             PetType.REPTILE -> R.drawable.pp_reptile
-            // Add other pet types and corresponding drawables
             else -> R.drawable.pets // Fallback image
         }
     }
@@ -113,7 +112,6 @@ class AddFragment : Fragment() {
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            // Show DatePickerDialog
             val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
                 val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
                 binding.edtVaccinationDates.setText(formattedDate) // Set selected date in the EditText
@@ -139,7 +137,6 @@ class AddFragment : Fragment() {
             return
         }
 
-        // Map displayName to PetType enum
         val petType = PetType.values().find { it.displayName == typeDisplayName } ?: return
 
         val petId = firebaseDatabase.push().key!!
@@ -150,7 +147,6 @@ class AddFragment : Fragment() {
                 .addOnSuccessListener { task ->
                     task.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { imageUrl ->
-                            // Save Feed Schedule to Firestore
                             val feedSched: MutableMap<String, Any> = hashMapOf(
                                 "morning" to foodAM,
                                 "noon" to foodNoon,
@@ -161,7 +157,6 @@ class AddFragment : Fragment() {
                                 .addOnSuccessListener { fsRef ->
                                     newFSID = fsRef.id
 
-                                    // Save Pet to Firestore w/ newFSID
                                     val pet: MutableMap<String, Any> = hashMapOf(
                                         "ownerID" to userId,
                                         "type" to petType.toString(),
@@ -170,19 +165,57 @@ class AddFragment : Fragment() {
                                         "vaccinationDates" to vaccinationDates,
                                         "feedSchedID" to newFSID,
                                         "petPicURL" to imageUrl.toString()
-
                                     )
 
                                     firestore.collection("pets").document(petId).set(pet)
                                         .addOnCompleteListener {
-
-                                            // Increment user's num pets
                                             firestore.collection("users").document(userId)
-                                                .update("NumPets", FieldValue.increment(1) )
+                                                .update("NumPets", FieldValue.increment(1))
                                         }
                                 }
                         }
                 }
+        } ?: run {
+            showAlertDialog("Error", "Please select an image")
+        }
+    }
+
+    private fun showAlertDialog(title: String, message: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("name", binding.edtName.text.toString())
+        outState.putString("breed", binding.edtBreed.text.toString())
+        outState.putString("vaccinationDates", binding.edtVaccinationDates.text.toString())
+        outState.putString("foodAmount", binding.edtFoodAmount.text.toString())
+        outState.putBoolean("foodAM", binding.amCB.isChecked)
+        outState.putBoolean("foodNoon", binding.noonCB.isChecked)
+        outState.putBoolean("foodPM", binding.pmCB.isChecked)
+        outState.putInt("petTypePosition", binding.spinnerPetType.selectedItemPosition)
+        outState.putParcelable("imageUri", uri)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.let {
+            binding.edtName.setText(it.getString("name"))
+            binding.edtBreed.setText(it.getString("breed"))
+            binding.edtVaccinationDates.setText(it.getString("vaccinationDates"))
+            binding.edtFoodAmount.setText(it.getString("foodAmount"))
+            binding.amCB.isChecked = it.getBoolean("foodAM")
+            binding.noonCB.isChecked = it.getBoolean("foodNoon")
+            binding.pmCB.isChecked = it.getBoolean("foodPM")
+            binding.spinnerPetType.setSelection(it.getInt("petTypePosition"))
+            uri = it.getParcelable("imageUri")
+            uri?.let { imageUri ->
+                binding.imgAdd.setImageURI(imageUri)
+            }
         }
     }
 

@@ -8,15 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -24,7 +22,6 @@ import com.squareup.picasso.Picasso
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.databinding.FragmentUpdateBinding
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.FeedSchedule
 import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.PetType
-import finalproject.group11_danielle_yunpeng_rameeze.sheridan.org.model.Pets
 import java.util.Calendar
 
 class UpdateFragment : Fragment() {
@@ -33,14 +30,13 @@ class UpdateFragment : Fragment() {
 
     private val args: UpdateFragmentArgs by navArgs()
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var firebaseDatabase: DatabaseReference
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storageRef: StorageReference
 
     private var uri: Uri? = null
     private var imageUrl: String? = null
-    private lateinit var feedSched:FeedSchedule
-    private lateinit var userID:String
+    private lateinit var feedSched: FeedSchedule
+    private lateinit var userID: String
 
     // Declare the ActivityResultLauncher globally
     private lateinit var pickImageLauncher: ActivityResultLauncher<String>
@@ -73,7 +69,6 @@ class UpdateFragment : Fragment() {
         imageUrl = args.petPicURL
 
         fetchFeedSched()
-
     }
 
     private fun setupPetTypeSpinner(selectedType: String) {
@@ -109,21 +104,19 @@ class UpdateFragment : Fragment() {
         }
     }
 
-    private fun fetchFeedSched(){
+    private fun fetchFeedSched() {
         firestore.collection("feedSched").document(args.feedSchedID)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                // Assuming there's only one document matching the query
-                feedSched = querySnapshot.toObject(FeedSchedule::class.java)!!
+            .addOnSuccessListener { documentSnapshot ->
+                feedSched = documentSnapshot.toObject(FeedSchedule::class.java)!!
                 updateUI()
-                Log.d("Firestore", "Feed Schedule: $feedSched")
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Error fetching feed schedule: ${exception.message}", exception)
             }
     }
 
-    private fun updateUI(){
+    private fun updateUI() {
 
         binding.apply {
             edtUpdateName.setText(args.name)
@@ -133,7 +126,7 @@ class UpdateFragment : Fragment() {
 
             amUpdateCB.isChecked = feedSched.morning
             noonUpdateCB.isChecked = feedSched.noon
-            pmUpdateCB.isChecked =feedSched.night
+            pmUpdateCB.isChecked = feedSched.night
 
             edtUpdateFoodAmount.setText(feedSched.amount)
             Picasso.get().load(imageUrl).into(imgUpdate)
@@ -163,7 +156,6 @@ class UpdateFragment : Fragment() {
             "BIRD" -> R.drawable.pp_bird
             "FISH" -> R.drawable.pp_fish
             "REPTILE" -> R.drawable.pp_reptile
-            // Add other pet types and corresponding drawables
             else -> R.drawable.pets // Fallback image
         }
     }
@@ -216,12 +208,11 @@ class UpdateFragment : Fragment() {
                                         "vaccinationDates" to vaccinationDates,
                                         "feedSchedID" to args.feedSchedID,
                                         "petPicURL" to imageUrl.toString()
-
                                     )
 
                                     firestore.collection("pets").document(petId).set(pet)
                                         .addOnCompleteListener {
-                                            Toast.makeText(requireContext(), "Pet Updated", Toast.LENGTH_SHORT).show()
+                                            showAlertDialog("Pet Updated")
                                         }
                                 }
                         }
@@ -248,17 +239,55 @@ class UpdateFragment : Fragment() {
                         "vaccinationDates" to vaccinationDates,
                         "feedSchedID" to args.feedSchedID,
                         "petPicURL" to imageUrl.toString()
-
                     )
 
                     firestore.collection("pets").document(petId).set(pet)
                         .addOnCompleteListener {
-                            Toast.makeText(requireContext(), "Pet Updated", Toast.LENGTH_SHORT).show()
+                            showAlertDialog("Pet Updated")
                         }
                 }
         }
     }
 
+    private fun showAlertDialog(message: String) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage(message)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+        builder.create().show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("name", binding.edtUpdateName.text.toString())
+        outState.putString("breed", binding.edtUpdateBreed.text.toString())
+        outState.putString("vaccinationDates", binding.edtUpdateVaccinationDates.text.toString())
+        outState.putString("foodAmount", binding.edtUpdateFoodAmount.text.toString())
+        outState.putBoolean("foodAM", binding.amUpdateCB.isChecked)
+        outState.putBoolean("foodNoon", binding.noonUpdateCB.isChecked)
+        outState.putBoolean("foodPM", binding.pmUpdateCB.isChecked)
+        outState.putInt("petTypePosition", binding.spinnerPetTypeUpdate.selectedItemPosition)
+        outState.putParcelable("uri", uri)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.let {
+            binding.edtUpdateName.setText(it.getString("name"))
+            binding.edtUpdateBreed.setText(it.getString("breed"))
+            binding.edtUpdateVaccinationDates.setText(it.getString("vaccinationDates"))
+            binding.edtUpdateFoodAmount.setText(it.getString("foodAmount"))
+            binding.amUpdateCB.isChecked = it.getBoolean("foodAM")
+            binding.noonUpdateCB.isChecked = it.getBoolean("foodNoon")
+            binding.pmUpdateCB.isChecked = it.getBoolean("foodPM")
+            binding.spinnerPetTypeUpdate.setSelection(it.getInt("petTypePosition"))
+            uri = it.getParcelable("uri")
+            uri?.let { imageUri ->
+                binding.imgUpdate.setImageURI(imageUri)
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

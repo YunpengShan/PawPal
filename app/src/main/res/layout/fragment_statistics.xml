@@ -41,55 +41,101 @@
             android:textStyle="bold" />
 
         <!-- Pet Type Statistics -->
+
+        <!-- Dog Statistics -->
         <TextView
             android:id="@+id/tvDogCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Dogs: 0"
             android:textColor="#217273"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/tvCatCount"
+            android:id="@+id/tvDogAvgFood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:text="Average Food Amount: 0.0"
+            android:textColor="#217273"
+            android:textSize="16sp" />
+
+        <!-- Cat Statistics -->
+        <TextView
+            android:id="@+id/tvCatCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Cats: 0"
             android:textColor="#217273"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/tvBirdCount"
+            android:id="@+id/tvCatAvgFood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:text="Average Food Amount: 0.0"
+            android:textColor="#217273"
+            android:textSize="16sp" />
+
+        <!-- Bird Statistics -->
+        <TextView
+            android:id="@+id/tvBirdCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Birds: 0"
             android:textColor="#217273"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/tvReptileCount"
+            android:id="@+id/tvBirdAvgFood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:text="Average Food Amount: 0.0"
+            android:textColor="#217273"
+            android:textSize="16sp" />
+
+        <!-- Reptile Statistics -->
+        <TextView
+            android:id="@+id/tvReptileCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Reptiles: 0"
             android:textColor="#217273"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/tvFishCount"
+            android:id="@+id/tvReptileAvgFood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:text="Average Food Amount: 0.0"
+            android:textColor="#217273"
+            android:textSize="16sp" />
+
+        <!-- Fish Statistics -->
+        <TextView
+            android:id="@+id/tvFishCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/baloo_bhaijaan"
             android:text="Fish: 0"
             android:textColor="#217273"
             android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvFishAvgFood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Average Food Amount: 0.0"
+            android:textColor="#217273"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>
